@@ -94,15 +94,19 @@ begin
 end; $$;
 
 -- Full CRUD on the live catalogue.
+-- NOTE: return type changed (added collection_time), so DROP the old signature first.
+drop function if exists public.admin_nav_list(text);
 create or replace function public.admin_nav_list(pw text)
 returns table(name text,title text,content text,detail text,url text,thumbnail_url text,
-              image_url text,category_name text,tag_name text,star_rating integer)
+              image_url text,category_name text,tag_name text,star_rating integer,
+              collection_time timestamptz)
 language plpgsql security definer set search_path=public as $$
 begin
   if not public.admin_check(pw) then raise exception 'unauthorized'; end if;
   return query select w.name,w.title,w.content,w.detail,w.url,w.thumbnail_url,w.image_url,
-                     w.category_name,w.tag_name,w.star_rating
-    from public.web_navigation w order by w.name;
+                     w.category_name,w.tag_name,w.star_rating,w.collection_time
+    from public.web_navigation w
+    order by w.collection_time desc nulls last, w.name;
 end; $$;
 
 create or replace function public.admin_nav_create(
@@ -195,3 +199,27 @@ grant execute on function public.admin_nav_create(text,text,text,text,text,text,
 grant execute on function public.admin_nav_update(text,text,text,text,text,text,text,text,text,text) to anon, authenticated;
 grant execute on function public.admin_nav_delete(text,text) to anon, authenticated;
 grant execute on function public.admin_changepw(text,text) to anon, authenticated;
+
+-- ============================================================
+-- Thumbnail uploads: public Storage bucket + policies.
+-- The admin page compresses a local image and uploads it with the
+-- public anon key, then stores the returned public URL in thumbnail_url.
+-- ============================================================
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
+values ('thumbs','thumbs',true,5242880,
+        array['image/jpeg','image/png','image/webp','image/gif','image/avif'])
+on conflict (id) do update set public=true,
+  file_size_limit=excluded.file_size_limit,
+  allowed_mime_types=excluded.allowed_mime_types;
+
+drop policy if exists "thumb_public_read" on storage.objects;
+create policy "thumb_public_read" on storage.objects for select to public
+  using (bucket_id='thumbs');
+
+drop policy if exists "thumb_anon_upload" on storage.objects;
+create policy "thumb_anon_upload" on storage.objects for insert to anon, authenticated
+  with check (bucket_id='thumbs');
+
+drop policy if exists "thumb_anon_delete" on storage.objects;
+create policy "thumb_anon_delete" on storage.objects for delete to anon, authenticated
+  using (bucket_id='thumbs');
