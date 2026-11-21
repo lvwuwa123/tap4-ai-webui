@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>室内设计AI广场 · 发现好用的 AI 工具</title>
+<meta name="description" content="室内设计AI广场：按分类浏览、搜索和收藏常用 AI 工具的导航站。">
+<style>
+:root{
+  --bg:#f7f8fc; --surface:#ffffff; --text:#171a2c; --muted:#6d7390;
+  --line:#e6e9f3; --accent:#4f46e5; --accent-soft:#eef0ff;
+  --header:rgba(255,255,255,.86); --shadow:0 10px 32px rgba(30,35,90,.07);
+  --shadow-hover:0 16px 40px rgba(50,50,120,.13); --chip:#f2f4fa;
+}
+[data-theme="dark"]{
+  --bg:#0e1018; --surface:#191c29; --text:#eef0fa; --muted:#9ba2be;
+  --line:#2b3042; --accent:#9a91ff; --accent-soft:#28254b;
+  --header:rgba(20,23,34,.86); --shadow:0 10px 32px rgba(0,0,0,.3);
+  --shadow-hover:0 16px 40px rgba(0,0,0,.45); --chip:#222637;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header{position:sticky;top:0;z-index:30;background:var(--header);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar{height:66px;display:flex;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:17px;letter-spacing:-.3px;white-space:nowrap}
+.logo{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#6366f1,#a855f7);display:grid;place-items:center;flex:none}
+.logo svg{width:19px;height:19px;fill:#fff}
+.brand small{display:block;font-weight:400;font-size:11px;color:var(--muted);letter-spacing:.5px;margin-top:1px}
+.bar-sp{flex:1}
+.tbtn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);color:var(--muted);transition:.18s}
+.tbtn:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-1px)}
+.tbtn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.langbtn{height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:12px;font-weight:600;color:var(--muted)}
+.langbtn:hover{color:var(--accent);border-color:var(--accent)}
+.hero{text-align:center;padding:64px 20px 30px;background:radial-gradient(900px 320px at 50% 0%,var(--accent-soft),transparent 72%)}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font-size:12px;color:var(--muted);box-shadow:var(--shadow)}
+.dot{width:6px;height:6px;border-radius:50%;background:#22c55e}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.2;margin:20px 0 12px;letter-spacing:-1.5px;font-weight:700}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{color:var(--muted);font-size:15px;line-height:1.7;max-width:580px;margin:0 auto 28px}
+.search{position:relative;max-width:620px;margin:0 auto}
+.search svg{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round}
+.search input{width:100%;height:56px;padding:0 18px 0 50px;border-radius:15px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:15px;outline:none;box-shadow:var(--shadow);transition:.2s}
+.search input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft),var(--shadow)}
+.search kbd{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:2px 6px;font-family:inherit}
+.stats{display:flex;justify-content:center;gap:38px;margin:26px 0 0;flex-wrap:wrap}
+.stat b{display:block;font-size:22px;font-weight:700;letter-spacing:-.5px}
+.stat span{font-size:12px;color:var(--muted)}
+main{padding:34px 0 70px}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.section-head h2{font-size:19px;margin:0;font-weight:650;letter-spacing:-.3px}
+.section-head p{margin:0;color:var(--muted);font-size:13px}
+.chips{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:24px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:99px;background:var(--chip);border:1px solid transparent;color:var(--muted);font-size:13px;transition:.16s;white-space:nowrap}
+.chip:hover{color:var(--text);transform:translateY(-1px)}
+.chip.on{background:var(--accent);color:#fff;box-shadow:0 5px 14px rgba(79,70,229,.28)}
+.chip i{font-style:normal;font-size:11px;opacity:.7}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;min-height:190px;cursor:pointer;transition:.2s;box-shadow:var(--shadow)}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);border-color:var(--accent)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.ico{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;overflow:hidden;flex:none;background:var(--ibg,#eef0ff);color:var(--ifg,#4f46e5);font-weight:700;font-size:15px;letter-spacing:.5px}
+.ico img{width:100%;height:100%;object-fit:cover}
+.fav{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--muted);opacity:.55;transition:.16s}
+.fav:hover{background:var(--accent-soft);color:var(--accent);opacity:1}
+.fav.on{color:#ef4444;opacity:1}
+.fav svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.fav.on svg{fill:currentColor}
+.card h3{margin:0 0 8px;font-size:15px;font-weight:650;line-height:1.4;letter-spacing:-.2px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.card p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:13px;border-top:1px solid var(--line)}
+.tag{font-size:11px;padding:4px 9px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.go{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:4px;transition:.16s}
+.card:hover .go{color:var(--accent)}
+.empty{text-align:center;padding:70px 20px;color:var(--muted)}
+.empty b{display:block;color:var(--text);font-size:17px;margin-bottom:8px}
+footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:12.5px;line-height:1.9}
+footer a{color:var(--accent)}
+.foot-row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(15,17,30,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:20px;width:min(680px,100%);max-height:86vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.28);padding:28px}
+.modal-top{display:flex;gap:16px;align-items:flex-start}
+.modal .ico{width:58px;height:58px;border-radius:15px;font-size:19px}
+.modal h2{margin:0 0 6px;font-size:21px;line-height:1.35;letter-spacing:-.4px}
+.modal .url{color:var(--muted);font-size:12.5px;word-break:break-all}
+.x{margin-left:auto;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--muted);font-size:20px;flex:none}
+.x:hover{background:var(--chip);color:var(--text)}
+.lead{color:var(--muted);font-size:14px;line-height:1.75;margin:20px 0 0;padding:16px;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
+.detail{margin-top:20px;font-size:13.5px;line-height:1.8;color:var(--text)}
+.detail h4{font-size:14.5px;margin:20px 0 8px;font-weight:650}
+.detail p{margin:0 0 12px;color:var(--muted)}
+.detail strong{color:var(--text)}
+.detail a{color:var(--accent);text-decoration:underline}
+.modal-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:7px;height:42px;padding:0 18px;border-radius:11px;font-size:13.5px;font-weight:600;transition:.18s}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn.ghost{border:1px solid var(--line);color:var(--muted)}
+.btn.ghost:hover{color:var(--text);border-color:var(--accent)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.slabel{display:block;font-size:12.5px;font-weight:600;margin:18px 0 8px;color:var(--muted)}
+.sinput{width:100%;height:44px;padding:0 13px;border-radius:11px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:14px;outline:none;font-family:inherit}
+.sinput:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.smsg{font-size:13px;line-height:1.6;margin-top:14px;min-height:20px}
+.smsg.ok{color:#16a34a}.smsg.err{color:#ef4444}
+.cloudbar{margin-top:16px;display:flex;justify-content:center}
+.cloudbar .badge{font-size:11.5px;padding:5px 11px}
+@media(max-width:640px){
+  .wrap{padding:0 16px}.hero{padding:44px 16px 22px}.stats{gap:22px}
+  .search kbd{display:none}.grid{grid-template-columns:1fr}.modal{padding:20px}
+  .brand small{display:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <div class="brand">
+      <span class="logo"><svg viewBox="0 0 24 24"><path d="M12 2l2.2 6.4L20.5 10l-6.3 1.6L12 18l-2.2-6.4L3.5 10l6.3-1.6L12 2zm6.5 13l1 2.8 2.8 1-2.8 1-1 2.8-1-2.8-2.8-1 2.8-1 1-2.8zM5 15l.8 2.2L8 18l-2.2.8L5 21l-.8-2.2L2 18l2.2-.8L5 15z"/></svg></span>
+      <span>室内设计AI广场<small>INTERIOR DESIGN AI PLAZA</small></span>
+    </div>
+    <div class="bar-sp"></div>
+    <button class="langbtn" id="submitBtn" data-i18n="submitBtn" title="Submit a tool">+ 提交工具</button>
+    <button class="langbtn" id="langBtn" title="Switch language">EN</button>
+    <button class="tbtn" id="themeBtn" title="Toggle theme"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button>
+  </div>
+</header>
+
+<section class="hero">
+  <span class="badge"><span class="dot"></span><span data-i18n="badge">持续收录 · 免费开源</span></span>
+  <h1><em data-i18n="h1a">发现好用的</em> <span data-i18n="h1b">室内设计AI广场</span></h1>
+  <p class="sub" data-i18n="sub">按分类浏览、即时搜索、随手收藏。收录图像、写作、编程、效率等方向的实用 AI 产品。</p>
+  <div class="search">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+    <input id="q" type="search" autocomplete="off" data-i18n-ph="search" placeholder="搜索工具名称、功能或分类…">
+    <kbd>/</kbd>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="statTools">0</b><span data-i18n="statTools">收录工具</span></div>
+    <div class="stat"><b id="statCats">0</b><span data-i18n="statCats">工具分类</span></div>
+    <div class="stat"><b id="statShown">0</b><span data-i18n="statShown">当前显示</span></div>
+  </div>
+  <div class="cloudbar"><span class="badge"><span class="dot" id="cloudDot" style="background:#f59e0b"></span><span id="cloudState">正在连接云数据库…</span></span></div>
+</section>
+
+<main class="wrap">
+  <div class="section-head">
+    <h2 data-i18n="browse">浏览全部工具</h2>
+    <p id="resultHint"></p>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <div>
+      <div data-i18n="foot1">数据实时读取自 Supabase 云数据库 · 断网时回退到本地快照</div>
+      <div data-i18n="foot2">工具版权归各自所有者所有 · 点击卡片查看详情，点击「访问官网」跳转</div>
+    </div>
+    <div><a href="https://github.com/lvwuwa123/tap4-ai-webui" target="_blank" rel="noopener">GitHub 项目 ↗</a></div>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="cloud.js"></script>
+<script>
+(function(){
+  "use strict";
+  var TOOLS = window.AI_TOOLS || [], CATS = window.AI_CATEGORIES || [];
+  var I18N = {
+    zh:{badge:"持续收录 · 免费开源",h1a:"发现好用的",h1b:"室内设计AI广场",sub:"按分类浏览、即时搜索、随手收藏。收录图像、写作、编程、效率等方向的实用 AI 产品。",search:"搜索工具名称、功能或分类…",statTools:"收录工具",statCats:"工具分类",statShown:"当前显示",browse:"浏览全部工具",all:"全部",fav:"我的收藏",empty:"没有找到匹配的工具",emptySub:"换个关键词，或选择其他分类试试",visit:"访问官网",close:"关闭",about:"工具简介",hint:"共 {n} 个结果",submitBtn:"+ 提交工具",submitTitle:"提交新工具",submitNote:"提交后进入云端待审核队列，站长审核后才会出现在导航中。",submitName:"工具名称",submitUrl:"官网地址（https://…）",submitSend:"提交",submitOk:"提交成功，已进入云端待审核队列。",submitErr:"提交失败，请稍后重试或检查网络。",submitInvalid:"请填写名称，并输入以 https:// 开头的有效地址。",cloudLive:"实时云端数据 · Supabase（{n} 条）",cloudOffline:"云端暂不可用 · 显示本地快照",foot1:"数据实时读取自 Supabase 云数据库 · 断网时回退到本地快照",foot2:"工具版权归各自所有者所有 · 点击卡片查看详情，点击「访问官网」跳转"},
+    en:{badge:"Open source · continuously curated",h1a:"Discover useful",h1b:" Interior Design AI Plaza",sub:"Browse by category, search instantly, and save your favorites. A curated directory of practical AI products.",search:"Search tools by name, feature or category…",statTools:"Tools",statCats:"Categories",statShown:"Showing",browse:"Browse all tools",all:"All",fav:"Favorites",empty:"No matching tools",emptySub:"Try another keyword or category",visit:"Visit website",close:"Close",about:"About",hint:"{n} results",submitBtn:"+ Submit",submitTitle:"Submit a tool",submitNote:"Submissions enter the cloud review queue and appear after approval.",submitName:"Tool name",submitUrl:"Website URL (https://…)",submitSend:"Submit",submitOk:"Submitted! It is now in the cloud review queue.",submitErr:"Submission failed. Check your connection and try again.",submitInvalid:"Enter a name and a valid https:// URL.",cloudLive:"Live cloud data · Supabase ({n})",cloudOffline:"Cloud unreachable · showing local snapshot",foot1:"Live data from Supabase · falls back to a local snapshot when offline",foot2:"All trademarks belong to their owners · click a card for details"}
+  };
+  var lang = "zh", state = {q:"",cat:"all",favOnly:false};
+  var favs = new Set();
+  try{ (JSON.parse(localStorage.getItem("ainav.favs")||"[]")||[]).forEach(function(n){favs.add(n);}); }catch(e){}
+  function saveFavs(){ try{ localStorage.setItem("ainav.favs",JSON.stringify(Array.from(favs))); }catch(e){} }
+  function t(k){ return (I18N[lang]||I18N.zh)[k] || k; }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];}); }
+  function initials(n){ var p=String(n).replace(/[^a-zA-Z0-9]+/g," ").trim().split(/\s+/).slice(0,2); return (p.map(function(w){return w.charAt(0);}).join("")||"AI").toUpperCase(); }
+  function hue(n){ var h=0; for(var i=0;i<n.length;i++){h=(h*31+n.charCodeAt(i))%360;} return h; }
+  function ico(t,size){ var h=hue(t.name), bg="hsl("+h+" 78% 92%)", fg="hsl("+h+" 55% 34%)";
+    if(document.documentElement.getAttribute("data-theme")==="dark"){ bg="hsl("+h+" 32% 24%)"; fg="hsl("+h+" 70% 76%)"; }
+    return '<div class="ico" style="--ibg:'+bg+';--ifg:'+fg+';'+(size?'width:'+size+'px;height:'+size+'px;':'')+'">'+(t.image?'<img src="'+esc(t.image)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'<span>'+esc(initials(t.name))+'</span></div>';
+  }
+  function catLabel(id){ for(var i=0;i<CATS.length;i++){ if(CATS[i].id===id) return lang==="zh"?CATS[i].label:(CATS[i].en||CATS[i].id); } return id; }
+  function catCount(id){ return TOOLS.filter(function(t){return t.category===id;}).length; }
+  function iconHeart(){ return '<svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z"/></svg>'; }
+
+  function renderChips(){
+    var used = CATS.filter(function(c){ return catCount(c.id)>0; });
+    var html = '<button class="chip'+(state.cat==="all"&&!state.favOnly?" on":"")+'" data-cat="all">'+t("all")+' <i>'+TOOLS.length+'</i></button>';
+    used.forEach(function(c){
+      html += '<button class="chip'+(state.cat===c.id&&!state.favOnly?" on":"")+'" data-cat="'+esc(c.id)+'">'+esc(catLabel(c.id))+' <i>'+catCount(c.id)+'</i></button>';
+    });
+    html += '<button class="chip'+(state.favOnly?" on":"")+'" data-cat="__fav">'+t("fav")+' <i>'+favs.size+'</i></button>';
+    document.getElementById("chips").innerHTML = html;
+  }
+  function filtered(){
+    var q=state.q.trim().toLowerCase();
+    return TOOLS.filter(function(x){
+      if(state.favOnly && !favs.has(x.name)) return false;
+      if(!state.favOnly && state.cat!=="all" && x.category!==state.cat) return false;
+      if(q && (x.name+" "+x.title+" "+x.content+" "+x.category+" "+catLabel(x.category)).toLowerCase().indexOf(q)<0) return false;
+      return true;
+    });
+  }
+  function render(){
+    var list=filtered(), grid=document.getElementById("grid");
+    document.getElementById("statShown").textContent=list.length;
+    document.getElementById("resultHint").textContent=t("hint").replace("{n}",list.length);
+    if(!list.length){ grid.innerHTML='<div class="empty" style="grid-column:1/-1"><b>'+t("empty")+'</b>'+t("emptySub")+'</div>'; return; }
+    grid.innerHTML=list.map(function(x){
+      var on=favs.has(x.name);
+      return '<article class="card" data-name="'+esc(x.name)+'">'+
+        '<div class="card-top">'+ico(x)+'<button class="fav'+(on?" on":"")+'" data-fav="'+esc(x.name)+'" title="'+t("fav")+'">'+iconHeart()+'</button></div>'+
+        '<h3 title="'+esc(x.title)+'">'+esc(x.title)+'</h3>'+
+        '<p>'+esc(x.content)+'</p>'+
+        '<div class="card-foot"><span class="tag">'+esc(catLabel(x.category))+'</span><a class="go" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-go="1">'+t("visit")+' ↗</a></div>'+
+      '</article>';
+    }).join("");
+  }
+  function inlineMd(s){
+    return esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/\n/g,"<br>");
+  }
+  function markdown(src){
+    if(!src) return "";
+    return String(src).split(/\n{2,}/).map(function(block){
+      var lines=block.split("\n"), first=lines[0].trim();
+      if(/^#{1,4}\s/.test(first)){
+        var head="<h4>"+inlineMd(first.replace(/^#{1,4}\s/,""))+"</h4>";
+        var rest=lines.slice(1).join("\n").trim();
+        return head+(rest?"<p>"+inlineMd(rest)+"</p>":"");
+      }
+      return "<p>"+inlineMd(block.trim())+"</p>";
+    }).join("");
+  }
+  var current=null;
+  function openModal(name){
+    var x=null; for(var i=0;i<TOOLS.length;i++){ if(TOOLS[i].name===name) x=TOOLS[i]; }
+    if(!x) return; current=x;
+    var on=favs.has(x.name);
+    document.getElementById("modal").innerHTML=
+      '<div class="modal-top">'+ico(x,58)+'<div style="min-width:0;flex:1"><h2>'+esc(x.title)+'</h2><div class="url">'+esc(x.url)+'</div></div><button class="x" id="closeBtn" aria-label="'+t("close")+'">×</button></div>'+
+      (x.content?'<div class="lead">'+esc(x.content)+'</div>':"")+
+      (x.detail?'<div class="detail">'+markdown(x.detail)+'</div>':"")+
+      '<div class="modal-actions"><a class="btn primary" href="'+esc(x.url)+'" target="_blank" rel="noopener">'+t("visit")+' ↗</a>'+
+      '<button class="btn ghost" id="modalFav">'+(on?"★ ":"☆ ")+t("fav")+'</button>'+
+      '<button class="btn ghost" id="closeBtn2">'+t("close")+'</button></div>';
+    document.getElementById("overlay").classList.add("show");
+    document.body.style.overflow="hidden";
+  }
+  function closeModal(){ document.getElementById("overlay").classList.remove("show"); document.body.style.overflow=""; current=null; }
+
+  /* ---------- live cloud data (Supabase REST + public anon key, protected by RLS) ---------- */
+  var cloudOk=false, cloudCount=0;
+  function cloudHeaders(){
+    var c=window.AI_CLOUD||{};
+    return {"apikey":c.anonKey,"Authorization":"Bearer "+c.anonKey,"Content-Type":"application/json"};
+  }
+  function setCloudState(){
+    var el=document.getElementById("cloudState"), dot=document.getElementById("cloudDot");
+    if(!el||!dot) return;
+    el.textContent = cloudOk ? t("cloudLive").replace("{n}",cloudCount) : t("cloudOffline");
+    dot.style.background = cloudOk ? "#22c55e" : "#f59e0b";
+  }
+  function applyCloud(rows,cats){
+    var mapped=(rows||[]).map(function(r){
+      return { name:r.name, title:r.title||r.name, content:r.content||"", detail:r.detail||"",
+               url:r.url||"#", image:r.thumbnail_url||r.image_url||"",
+               category:r.category_name||r.tag_name||"other" };
+    }).filter(function(x){ return x.name && x.url; });
+    if(!mapped.length) return false;
+    TOOLS=mapped;
+    var cm=(cats||[]).map(function(c){ return {id:c.name,label:c.title||c.name,en:c.title||c.name}; });
+    if(cm.length) CATS=cm;
+    return true;
+  }
+  function syncCloud(){
+    var c=window.AI_CLOUD;
+    if(!c||!c.url||!c.anonKey){ setCloudState(); return; }
+    var h=cloudHeaders();
+    Promise.all([
+      fetch(c.url+"/rest/v1/web_navigation?select=*",{headers:h}).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); }),
+      fetch(c.url+"/rest/v1/navigation_category?select=*",{headers:h}).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    ]).then(function(res){
+      if(!applyCloud(res[0],res[1])) throw new Error("empty");
+      cloudOk=true; cloudCount=TOOLS.length;
+      document.getElementById("statTools").textContent=TOOLS.length;
+      document.getElementById("statCats").textContent=CATS.filter(function(x){return catCount(x.id)>0;}).length;
+      renderChips(); render(); setCloudState();
+    }).catch(function(){ cloudOk=false; setCloudState(); });
+  }
+  function openSubmit(){
+    current=null;
+    document.getElementById("modal").innerHTML=
+      '<div class="modal-top"><div style="min-width:0;flex:1"><h2>'+t("submitTitle")+'</h2><div class="url">'+t("submitNote")+'</div></div><button class="x" id="closeBtn">×</button></div>'+
+      '<label class="slabel" for="sName">'+t("submitName")+'</label><input class="sinput" id="sName" maxlength="120" placeholder="ChatGPT">'+
+      '<label class="slabel" for="sUrl">'+t("submitUrl")+'</label><input class="sinput" id="sUrl" maxlength="500" placeholder="https://example.com">'+
+      '<div class="smsg" id="sMsg"></div>'+
+      '<div class="modal-actions"><button class="btn primary" id="submitSend">'+t("submitSend")+'</button><button class="btn ghost" id="closeBtn2">'+t("close")+'</button></div>';
+    document.getElementById("overlay").classList.add("show");
+    document.body.style.overflow="hidden";
+  }
+  function doSubmit(btn){
+    var name=(document.getElementById("sName")||{}).value||"";
+    var url=(document.getElementById("sUrl")||{}).value||"";
+    var msg=document.getElementById("sMsg");
+    name=name.trim(); url=url.trim();
+    if(!name||!/^https?:\/\//i.test(url)){ msg.className="smsg err"; msg.textContent=t("submitInvalid"); return; }
+    var c=window.AI_CLOUD;
+    if(!c||!c.url){ msg.className="smsg err"; msg.textContent=t("submitErr"); return; }
+    btn.disabled=true; msg.className="smsg"; msg.textContent="…";
+    fetch(c.url+"/rest/v1/submit",{method:"POST",headers:Object.assign(cloudHeaders(),{"Prefer":"return=minimal"}),body:JSON.stringify({name:name,url:url})})
+      .then(function(r){ if(!r.ok) throw new Error(r.status); msg.className="smsg ok"; msg.textContent=t("submitOk"); document.getElementById("sName").value=""; document.getElementById("sUrl").value=""; })
+      .catch(function(){ msg.className="smsg err"; msg.textContent=t("submitErr"); })
+      .then(function(){ btn.disabled=false; });
+  }
+
+  document.getElementById("submitBtn").addEventListener("click",openSubmit);
+  document.getElementById("chips").addEventListener("click",function(e){
+    var b=e.target.closest("[data-cat]"); if(!b) return;
+    var c=b.getAttribute("data-cat");
+    state.favOnly=(c==="__fav"); state.cat=state.favOnly?"all":c;
+    renderChips(); render();
+  });
+  document.getElementById("grid").addEventListener("click",function(e){
+    var f=e.target.closest("[data-fav]");
+    if(f){ e.stopPropagation(); var n=f.getAttribute("data-fav"); if(favs.has(n)) favs.delete(n); else favs.add(n); saveFavs(); renderChips(); render(); if(current&&current.name===n) openModal(n); return; }
+    var g=e.target.closest("[data-go]"); if(g){ e.stopPropagation(); return; }
+    var c=e.target.closest(".card"); if(c) openModal(c.getAttribute("data-name"));
+  });
+  document.getElementById("modal").addEventListener("click",function(e){
+    if(e.target.id==="closeBtn"||e.target.id==="closeBtn2"){ closeModal(); return; }
+    if(e.target.id==="submitSend"){ doSubmit(e.target); return; }
+    if(e.target.id==="modalFav"&&current){
+      if(favs.has(current.name)) favs.delete(current.name); else favs.add(current.name);
+      saveFavs(); renderChips(); render(); openModal(current.name);
+    }
+  });
+  document.getElementById("overlay").addEventListener("click",function(e){ if(e.target.id==="overlay") closeModal(); });
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape") closeModal();
+    if(e.key==="/"&&document.activeElement.id!=="q"){ e.preventDefault(); document.getElementById("q").focus(); }
+  });
+  document.getElementById("q").addEventListener("input",function(e){ state.q=e.target.value; render(); });
+
+  document.getElementById("themeBtn").addEventListener("click",function(){
+    var dark=document.documentElement.getAttribute("data-theme")==="dark";
+    document.documentElement.setAttribute("data-theme",dark?"light":"dark");
+    try{ localStorage.setItem("ainav.theme",dark?"light":"dark"); }catch(e){}
+    render(); if(current) openModal(current.name);
+  });
+  document.getElementById("langBtn").addEventListener("click",function(){
+    lang=lang==="zh"?"en":"zh";
+    document.getElementById("langBtn").textContent=lang==="zh"?"EN":"中";
+    document.querySelectorAll("[data-i18n]").forEach(function(el){ el.textContent=t(el.getAttribute("data-i18n")); });
+    document.getElementById("q").placeholder=t("search");
+    document.documentElement.lang=lang==="zh"?"zh-CN":"en";
+    setCloudState(); renderChips(); render(); if(current) openModal(current.name);
+  });
+
+  (function init(){
+    try{ if(localStorage.getItem("ainav.theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); }catch(e){}
+    document.getElementById("statTools").textContent=TOOLS.length;
+    document.getElementById("statCats").textContent=CATS.filter(function(c){return catCount(c.id)>0;}).length;
+    renderChips(); render(); syncCloud();
+  })();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>审核后台 · 室内设计AI广场</title>
+<style>
+:root{
+  --bg:#f7f8fc; --surface:#ffffff; --text:#171a2c; --muted:#6d7390;
+  --line:#e6e9f3; --accent:#4f46e5; --accent-soft:#eef0ff;
+  --header:rgba(255,255,255,.86); --shadow:0 10px 32px rgba(30,35,90,.07);
+  --shadow-hover:0 16px 40px rgba(50,50,120,.13); --chip:#f2f4fa;
+  --ok:#16a34a; --oksoft:#eafaf0; --warn:#d97706; --danger:#ef4444;
+}
+[data-theme="dark"]{
+  --bg:#0e1018; --surface:#191c29; --text:#eef0fa; --muted:#9ba2be;
+  --line:#2b3042; --accent:#9a91ff; --accent-soft:#28254b;
+  --header:rgba(20,23,34,.86); --shadow:0 10px 32px rgba(0,0,0,.3);
+  --shadow-hover:0 16px 40px rgba(0,0,0,.45); --chip:#222637;
+  --ok:#4ade80; --oksoft:#1b3327; --warn:#fbbf24; --danger:#f87171;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+header{position:sticky;top:0;z-index:30;background:var(--header);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar{height:66px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:17px;letter-spacing:-.3px;white-space:nowrap}
+.logo{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#6366f1,#a855f7);display:grid;place-items:center;flex:none;color:#fff;font-size:14px}
+.brand small{display:block;font-weight:400;font-size:11px;color:var(--muted);letter-spacing:.5px;margin-top:1px}
+.bar-sp{flex:1}
+.tbtn{height:36px;padding:0 12px;border-radius:10px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:12px;font-weight:600;transition:.18s}
+.tbtn:hover{color:var(--accent);border-color:var(--accent)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.btn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border-radius:10px;font-size:13px;font-weight:600;transition:.18s;white-space:nowrap}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.ok:hover{filter:brightness(1.05)}
+.btn.ghost{border:1px solid var(--line);color:var(--muted)}
+.btn.ghost:hover{color:var(--text);border-color:var(--accent)}
+.btn.danger{border:1px solid var(--line);color:var(--danger)}
+.btn.danger:hover{border-color:var(--danger)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn.sm{height:32px;padding:0 11px;font-size:12px}
+
+/* login */
+.login-wrap{min-height:calc(100vh - 66px);display:grid;place-items:center;padding:24px}
+.login{width:min(420px,100%);padding:34px}
+.login h1{margin:0 0 6px;font-size:22px;letter-spacing:-.4px}
+.login p{margin:0 0 24px;color:var(--muted);font-size:13.5px;line-height:1.7}
+.label{display:block;font-size:12.5px;font-weight:600;margin:0 0 8px;color:var(--muted)}
+.input{width:100%;height:46px;padding:0 14px;border-radius:11px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:14px;outline:none;font-family:inherit}
+.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.login .btn{width:100%;justify-content:center;height:46px;margin-top:16px}
+.msg{font-size:13px;line-height:1.6;margin-top:14px;min-height:20px}
+.msg.err{color:var(--danger)}.msg.ok{color:var(--ok)}
+
+/* dashboard */
+h2.sec{font-size:19px;margin:34px 0 16px;font-weight:650;letter-spacing:-.3px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:26px}
+.stat{padding:18px 20px}
+.stat b{display:block;font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1.2}
+.stat span{font-size:12.5px;color:var(--muted)}
+.stat.a b{color:var(--accent)}.stat.w b{color:var(--warn)}.stat.g b{color:var(--ok)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0 16px}
+.tab{padding:8px 14px;border-radius:99px;background:var(--chip);color:var(--muted);font-size:13px;font-weight:600;border:1px solid transparent;transition:.16s}
+.tab:hover{color:var(--text)}
+.tab.on{background:var(--accent);color:#fff}
+.tab i{font-style:normal;opacity:.75;font-size:11px;margin-left:3px}
+.list{display:flex;flex-direction:column;gap:12px;padding-bottom:60px}
+.item{padding:18px 20px}
+.item-top{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.item-name{font-size:15px;font-weight:650;line-height:1.4}
+.item-url{color:var(--muted);font-size:12px;word-break:break-all;margin-top:3px}
+.item-meta{font-size:11.5px;color:var(--muted);margin-top:6px}
+.badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:6px;font-weight:600;white-space:nowrap}
+.badge.p0{background:var(--accent-soft);color:var(--accent)}
+.badge.p1{background:var(--oksoft);color:var(--ok)}
+.badge.p2{background:var(--chip);color:var(--muted)}
+.item-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.form{display:none;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.form.open{display:block}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.fgrid .full{grid-column:1/-1}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:13.5px;font-family:inherit;outline:none;padding:10px 12px}
+.field input,.field select{height:42px}
+.field textarea{min-height:80px;resize:vertical;line-height:1.6}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.form-actions{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap;align-items:center}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty b{display:block;color:var(--text);font-size:16px;margin-bottom:6px}
+.pwbox{margin-top:10px;padding:16px 18px}
+.pwbox h3{margin:0 0 12px;font-size:14px}
+.pwrow{display:flex;gap:9px;flex-wrap:wrap}
+.pwrow .input{flex:1;min-width:160px}
+.mainnav{display:flex;gap:6px;margin-top:24px;border-bottom:1px solid var(--line)}
+.mainnav button{padding:11px 16px;font-size:14px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:.16s;white-space:nowrap}
+.mainnav button:hover{color:var(--text)}
+.mainnav button.on{color:var(--accent);border-bottom-color:var(--accent)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
+.toolbar .input{max-width:360px;flex:1;min-width:200px;height:40px}
+.toolbar .cnt{color:var(--muted);font-size:12.5px;margin-left:auto}
+.toolitem{padding:15px 18px}
+.toolitem .item-name{margin-bottom:2px}
+.toolmeta{font-size:11.5px;color:var(--muted);margin-top:6px;word-break:break-all;line-height:1.6}
+.catbadge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(15,17,30,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.show{display:flex}
+.editbox{background:var(--surface);border:1px solid var(--line);border-radius:20px;width:min(680px,100%);max-height:86vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.28);padding:26px}
+.editbox h3{margin:0 0 4px;font-size:19px;letter-spacing:-.3px}
+.editbox .hint{color:var(--muted);font-size:12.5px;margin:0 0 18px;line-height:1.6}
+.editbox .x{float:right;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--muted);font-size:20px}
+.editbox .x:hover{background:var(--chip);color:var(--text)}
+footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);font-size:12px}
+@media(max-width:640px){
+  .wrap{padding:0 16px}.item-actions{margin-left:0}.stat b{font-size:24px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <div class="brand"><span class="logo">✦</span><span>审核后台<small>INTERIOR DESIGN AI PLAZA · ADMIN</small></span></div>
+    <div class="bar-sp"></div>
+    <button class="tbtn" id="homeBtn">返回站点</button>
+    <button class="tbtn" id="themeBtn">🌙</button>
+    <button class="tbtn" id="logoutBtn" style="display:none">退出</button>
+  </div>
+</header>
+
+<div id="loginView" class="login-wrap">
+  <div class="login card">
+    <h1>审核后台登录</h1>
+    <p>审核用户提交、管理导航工具（增删改查）。请输入管理员密码。</p>
+    <label class="label" for="pw">管理员密码</label>
+    <input class="input" id="pw" type="password" autocomplete="current-password" placeholder="输入密码">
+    <button class="btn primary" id="loginBtn">登录</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</div>
+
+<div id="dashView" class="wrap" style="display:none">
+  <div class="mainnav" id="mainnav">
+    <button class="on" data-view="submit">提交审核</button>
+    <button data-view="nav">导航工具管理</button>
+  </div>
+
+  <!-- 提交审核视图 -->
+  <div id="viewSubmit">
+    <h2 class="sec">数据概览</h2>
+    <div class="stats" id="stats"></div>
+    <h2 class="sec">提交管理</h2>
+    <div class="tabs" id="tabs"></div>
+    <div class="list" id="list"></div>
+  </div>
+
+  <!-- 导航工具 CRUD 视图 -->
+  <div id="viewNav" style="display:none">
+    <h2 class="sec">导航工具管理</h2>
+    <div class="toolbar">
+      <input class="input" id="navSearch" type="search" placeholder="搜索名称 / 标题 / 分类…" autocomplete="off">
+      <button class="btn primary" id="navAddBtn">+ 新增工具</button>
+      <span class="cnt" id="navCount"></span>
+    </div>
+    <div class="list" id="navList"></div>
+  </div>
+
+  <div class="pwbox card">
+    <h3>修改管理员密码</h3>
+    <div class="pwrow">
+      <input class="input" id="oldPw" type="password" placeholder="当前密码">
+      <input class="input" id="newPw" type="password" placeholder="新密码（至少 8 位）">
+      <button class="btn ghost" id="chpwBtn">修改</button>
+    </div>
+    <div class="msg" id="pwMsg"></div>
+  </div>
+</div>
+
+<div class="overlay" id="editOverlay"><div class="editbox" id="editBox" role="dialog" aria-modal="true"></div></div>
+
+<footer><div class="wrap">审核后台 · 数据存于 Supabase · 所有写操作经服务端函数校验密码后执行</div></footer>
+
+<script src="cloud.js"></script>
+<script>
+(function(){
+"use strict";
+var C = window.AI_CLOUD || {};
+var PWD = "", tab = 0, stats = null, rows = [], cats = [];
+var navRows = [], navQ = "", curView = "submit";
+var LABELS = ["待审核","已通过","已拒绝","全部"];
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+
+function rpc(fn, payload){
+  return fetch(C.url+"/rest/v1/rpc/"+fn,{
+    method:"POST",
+    headers:{"apikey":C.anonKey,"Authorization":"Bearer "+C.anonKey,"Content-Type":"application/json"},
+    body:JSON.stringify(payload||{})
+  }).then(function(r){
+    if(r.status===401 || r.status===400) return r.text().then(function(tx){
+      var m=""; try{ m=(JSON.parse(tx).message)||""; }catch(e){}
+      if(/unauthorized/i.test(m)) throw new Error("密码错误");
+      throw new Error(m||("请求失败 "+r.status));
+    });
+    if(!r.ok) throw new Error("请求失败 "+r.status);
+    return r.json();
+  });
+}
+
+function fmtDate(s){ if(!s) return ""; try{ var d=new Date(s); return d.toLocaleString("zh-CN",{hour12:false}); }catch(e){ return s; } }
+function statusBadge(s){ return '<span class="badge p'+s+'">'+(s===0?"待审核":s===1?"已通过":"已拒绝")+'</span>'; }
+
+function renderStats(){
+  var d=stats||{};
+  var data=[
+    {n:d.pending||0,l:"待审核",c:"a"},{n:d.approved||0,l:"已通过",c:"g"},
+    {n:d.rejected||0,l:"已拒绝",c:""},{n:d.live||0,l:"导航已发布",c:"a"}
+  ];
+  $("stats").innerHTML=data.map(function(x){
+    return '<div class="stat '+x.c+' card"><b>'+x.n+'</b><span>'+x.l+'</span></div>';
+  }).join("");
+}
+function renderTabs(){
+  var counts=[stats.pending||0,stats.approved||0,stats.rejected||0,stats.total||0];
+  $("tabs").innerHTML=LABELS.map(function(l,i){
+    return '<button class="tab'+(i===tab?" on":"")+'" data-tab="'+i+'">'+l+'<i>'+counts[i]+'</i></button>';
+  }).join("");
+}
+function filtered(){
+  if(tab===3) return rows;
+  return rows.filter(function(r){ return r.status===tab; });
+}
+function renderList(){
+  var data=filtered();
+  if(!data.length){
+    $("list").innerHTML='<div class="empty card"><b>暂无记录</b>这个分类下没有提交。</div>';
+    return;
+  }
+  $("list").innerHTML=data.map(function(r){
+    var opt=cats.map(function(c){
+      var sel=(c.name==="other")?" selected":"";
+      return '<option value="'+esc(c.name)+'"'+sel+'>'+esc(c.title||c.name)+'</option>';
+    }).join("");
+    var canApprove = r.status!==1;
+    return '<div class="item card" data-id="'+r.id+'">'+
+      '<div class="item-top">'+
+        '<div style="min-width:0;flex:1">'+
+          '<div class="item-name">'+esc(r.name)+' '+statusBadge(r.status)+'</div>'+
+          '<div class="item-url"><a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+' ↗</a></div>'+
+          '<div class="item-meta">'+fmtDate(r.created_at)+(r.email?" · "+esc(r.email):"")+'</div>'+
+        '</div>'+
+        '<div class="item-actions">'+
+          (canApprove?'<button class="btn ok sm" data-act="toggle">通过并发布</button>':'')+
+          (r.status!==2?'<button class="btn ghost sm" data-act="reject">拒绝</button>':'')+
+          '<button class="btn danger sm" data-act="delete">删除</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="form" id="form-'+r.id+'">'+
+        '<div class="fgrid">'+
+          '<div class="field"><label>分类</label><select data-f="category">'+opt+'</select></div>'+
+          '<div class="field"><label>标签</label><input data-f="tag" value="other" placeholder="other"></div>'+
+          '<div class="field full"><label>标题（默认用名称）</label><input data-f="title" placeholder="留空则用提交的名称"></div>'+
+          '<div class="field full"><label>简介</label><textarea data-f="content" placeholder="一句话介绍这个工具"></textarea></div>'+
+          '<div class="field full"><label>详情（可选）</label><textarea data-f="detail" placeholder="Markdown 格式的详细说明"></textarea></div>'+
+        '</div>'+
+        '<div class="form-actions">'+
+          '<button class="btn ok" data-act="approve">确认通过并发布到导航</button>'+
+          '<button class="btn ghost" data-act="cancel">取消</button>'+
+          '<span class="msg" data-msg></span>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join("");
+}
+
+function load(){
+  return Promise.all([
+    rpc("admin_stats",{pw:PWD}),rpc("admin_list",{pw:PWD}),
+    rpc("admin_categories",{pw:PWD}),rpc("admin_nav_list",{pw:PWD})
+  ]).then(function(res){ stats=res[0]; rows=res[1]; cats=res[2]; navRows=res[3]||[]; return res; });
+}
+function refresh(){
+  renderStats(); renderTabs(); renderList(); renderNavList();
+}
+
+/* ===== 导航工具 CRUD ===== */
+function catOptions(selected){
+  selected=selected||"other";
+  return cats.map(function(c){
+    return '<option value="'+esc(c.name)+'"'+(c.name===selected?" selected":"")+'>'+esc(c.title||c.name)+'</option>';
+  }).join("");
+}
+function navFiltered(){
+  var q=navQ.toLowerCase().trim();
+  if(!q) return navRows;
+  return navRows.filter(function(x){
+    return ((x.name||"")+" "+(x.title||"")+" "+(x.content||"")+" "+(x.category_name||"")+" "+(x.tag_name||"")).toLowerCase().indexOf(q)>=0;
+  });
+}
+function renderNavList(){
+  var data=navFiltered();
+  $("navCount").textContent="共 "+navRows.length+" 个工具"+(qSuffix());
+  if(!data.length){
+    $("navList").innerHTML='<div class="empty card"><b>没有匹配的工具</b>换个关键词，或点「+ 新增工具」。</div>';
+    return;
+  }
+  $("navList").innerHTML=data.map(function(x){
+    return '<div class="item toolitem card" data-name="'+esc(x.name)+'">'+
+      '<div class="item-top">'+
+        '<div style="min-width:0;flex:1">'+
+          '<div class="item-name">'+esc(x.title||x.name)+'</div>'+
+          '<div class="item-url"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.url)+' ↗</a></div>'+
+          '<div class="toolmeta"><span class="catbadge">'+esc(x.category_name||x.tag_name||"other")+'</span> &nbsp;key: '+esc(x.name)+'</div>'+
+          (x.content?'<div class="toolmeta">'+esc(x.content)+'</div>':'')+
+        '</div>'+
+        '<div class="item-actions">'+
+          '<button class="btn ghost sm" data-act="edit">编辑</button>'+
+          '<button class="btn danger sm" data-act="del">删除</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join("");
+}
+function qSuffix(){ return navQ?("，匹配 "+navFiltered().length+" 个"):""; }
+
+function openEditor(item){
+  var isEdit=!!item;
+  var d=item||{name:"",title:"",content:"",detail:"",url:"",thumbnail_url:"",category_name:"other",tag_name:"other"};
+  $("editBox").innerHTML=
+    '<button class="x" id="edClose">×</button>'+
+    '<h3>'+(isEdit?"编辑工具":"新增工具")+'</h3>'+
+    '<p class="hint">'+(isEdit?'工具唯一标识 key 可修改，但改 key 等于新建一个条目。':'key（name）是唯一标识，提交后访客刷新即可在导航看到。')+'</p>'+
+    '<div class="fgrid">'+
+      '<div class="field"><label>唯一标识 key（必填）</label><input data-f="name" value="'+esc(d.name)+'" placeholder="chatgpt"></div>'+
+      '<div class="field"><label>显示标题</label><input data-f="title" value="'+esc(d.title||"")+'" placeholder="留空则与 key 相同"></div>'+
+      '<div class="field full"><label>官网地址（必填）</label><input data-f="url" value="'+esc(d.url||"")+'" placeholder="https://example.com"></div>'+
+      '<div class="field"><label>分类</label><select data-f="category">'+catOptions(d.category_name||"other")+'</select></div>'+
+      '<div class="field"><label>标签</label><input data-f="tag" value="'+esc(d.tag_name||"other")+'" placeholder="other"></div>'+
+      '<div class="field full"><label>缩略图地址（可选）</label><input data-f="thumb" value="'+esc(d.thumbnail_url||"")+'" placeholder="https://…"></div>'+
+      '<div class="field full"><label>简介</label><textarea data-f="content" placeholder="一句话介绍">'+esc(d.content||"")+'</textarea></div>'+
+      '<div class="field full"><label>详情（可选，支持 Markdown）</label><textarea data-f="detail" placeholder="详细说明">'+esc(d.detail||"")+'</textarea></div>'+
+    '</div>'+
+    '<div class="form-actions">'+
+      '<button class="btn '+(isEdit?"primary":"ok")+'" id="edSave">'+(isEdit?"保存修改":"确认新增")+'</button>'+
+      '<button class="btn ghost" id="edCancel">取消</button>'+
+      '<span class="msg" id="edMsg"></span>'+
+    '</div>';
+  $("editOverlay").classList.add("show");
+  document.body.style.overflow="hidden";
+  $("edClose").onclick=$("edCancel").onclick=closeEditor;
+  $("edSave").onclick=function(){
+    var g=function(f){ var el=$("editBox").querySelector('[data-f="'+f+'"]'); return el?el.value.trim():""; };
+    var name=g("name"), url=g("url"), m=$("edMsg");
+    if(!name||!/^https?:\/\//i.test(url)){ m.className="msg err"; m.textContent="请填写 key 和以 http(s):// 开头的网址"; return; }
+    var payload={pw:PWD,p_name:isEdit?item.name:name,p_new_name:name,p_title:g("title"),p_content:g("content"),
+      p_detail:g("detail"),p_url:url,p_thumbnail:g("thumb"),p_category:g("category")||"other",p_tag:g("tag")||"other"};
+    var fn=isEdit?"admin_nav_update":"admin_nav_create";
+    if(!isEdit){ delete payload.p_new_name; }
+    this.disabled=true; m.className="msg"; m.textContent="保存中…";
+    rpc(fn,payload).then(function(r){
+      if(!r||!r.ok) throw new Error((r&&r.err)||"保存失败");
+      m.className="msg ok"; m.textContent=isEdit?"已保存":"已新增";
+      closeEditor();
+      return load().then(refresh);
+    }).catch(function(err){ m.className="msg err"; m.textContent=err.message||"保存失败"; })
+      .then(function(){ $("edSave").disabled=false; });
+  };
+}
+function closeEditor(){ $("editOverlay").classList.remove("show"); document.body.style.overflow=""; }
+
+function showDash(){
+  $("loginView").style.display="none";
+  $("dashView").style.display="";
+  $("logoutBtn").style.display="";
+}
+
+$("themeBtn").addEventListener("click",function(){
+  var cur=document.documentElement.getAttribute("data-theme");
+  var next=cur==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",next);
+  try{ localStorage.setItem("ainav.admin.theme",next); }catch(e){}
+  this.textContent=next==="dark"?"☀️":"🌙";
+});
+try{ if(localStorage.getItem("ainav.admin.theme")==="dark"){ document.documentElement.setAttribute("data-theme","dark"); $("themeBtn").textContent="☀️"; } }catch(e){}
+$("homeBtn").addEventListener("click",function(){ location.href="index.html"; });
+
+$("loginBtn").addEventListener("click",function(){
+  var pw=$("pw").value.trim();
+  if(!pw){ $("loginMsg").className="msg err"; $("loginMsg").textContent="请输入密码"; return; }
+  this.disabled=true; $("loginMsg").textContent="验证中…";
+  rpc("admin_stats",{pw:pw}).then(function(){
+    PWD=pw;
+    try{ sessionStorage.setItem("ainav.admin.pw",pw); }catch(e){}
+    $("loginMsg").textContent="";
+    showDash();
+    return load();
+  }).then(function(){ refresh(); })
+    .catch(function(e){ $("loginMsg").className="msg err"; $("loginMsg").textContent=e.message||"登录失败"; })
+    .then(function(){ $("loginBtn").disabled=false; });
+});
+$("pw").addEventListener("keydown",function(e){ if(e.key==="Enter") $("loginBtn").click(); });
+
+$("logoutBtn").addEventListener("click",function(){
+  PWD=""; try{ sessionStorage.removeItem("ainav.admin.pw"); }catch(e){}
+  $("dashView").style.display="none"; $("loginView").style.display="";
+  $("logoutBtn").style.display="none"; $("pw").value="";
+});
+
+$("tabs").addEventListener("click",function(e){
+  var b=e.target.closest("[data-tab]"); if(!b) return;
+  tab=parseInt(b.getAttribute("data-tab"),10);
+  renderTabs(); renderList();
+});
+
+$("list").addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]"); if(!b) return;
+  var item=b.closest(".item"); var id=item.getAttribute("data-id");
+  var act=b.getAttribute("data-act");
+  var form=$("form-"+id);
+
+  if(act==="toggle"){ form.classList.toggle("open"); return; }
+  if(act==="cancel"){ form.classList.remove("open"); return; }
+
+  if(act==="approve"){
+    var g=function(f){ var el=form.querySelector('[data-f="'+f+'"]'); return el?el.value.trim():""; };
+    var m=form.querySelector("[data-msg]");
+    b.disabled=true; m.className="msg"; m.textContent="发布中…";
+    rpc("admin_approve",{pw:PWD,p_id:Number(id),p_category:g("category")||"other",p_tag:g("tag")||"other",
+      p_title:g("title"),p_content:g("content"),p_detail:g("detail")})
+      .then(function(r){ if(!r||!r.ok) throw new Error((r&&r.err)||"发布失败");
+        m.className="msg ok"; m.textContent=r.warn?("已通过："+r.warn):"已发布到导航";
+        return load().then(refresh);
+      }).catch(function(err){ m.className="msg err"; m.textContent=err.message||"发布失败"; })
+      .then(function(){ b.disabled=false; });
+    return;
+  }
+  if(act==="reject" || act==="delete"){
+    var fn=act==="reject"?"admin_reject":"admin_delete";
+    b.disabled=true;
+    rpc(fn,{pw:PWD,p_id:Number(id)})
+      .then(function(r){ if(!r||!r.ok) throw new Error((r&&r.err)||"操作失败"); return load().then(refresh); })
+      .catch(function(err){ alert(err.message||"操作失败"); })
+      .then(function(){ b.disabled=false; });
+  }
+});
+
+/* 主视图切换 */
+$("mainnav").addEventListener("click",function(e){
+  var b=e.target.closest("[data-view]"); if(!b) return;
+  curView=b.getAttribute("data-view");
+  [].forEach.call(this.querySelectorAll("button"),function(x){ x.classList.toggle("on",x===b); });
+  $("viewSubmit").style.display=curView==="submit"?"":"none";
+  $("viewNav").style.display=curView==="nav"?"":"none";
+});
+$("navSearch").addEventListener("input",function(){ navQ=this.value; renderNavList(); });
+$("navAddBtn").addEventListener("click",function(){ openEditor(null); });
+$("editOverlay").addEventListener("click",function(e){ if(e.target===this) closeEditor(); });
+$("navList").addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]"); if(!b) return;
+  var item=b.closest(".item"); var name=item.getAttribute("data-name");
+  var act=b.getAttribute("data-act");
+  if(act==="edit"){
+    var found=navRows.filter(function(x){ return x.name===name; })[0];
+    if(found) openEditor(found);
+    return;
+  }
+  if(act==="del"){
+    if(!confirm("确定删除工具「"+name+"」？此操作不可撤销。")) return;
+    b.disabled=true;
+    rpc("admin_nav_delete",{pw:PWD,p_name:name})
+      .then(function(r){ if(!r||!r.ok) throw new Error((r&&r.err)||"删除失败"); return load().then(refresh); })
+      .catch(function(err){ alert(err.message||"删除失败"); })
+      .then(function(){ b.disabled=false; });
+  }
+});
+document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&$("editOverlay").classList.contains("show")) closeEditor(); });
+
+$("chpwBtn").addEventListener("click",function(){
+  var o=$("oldPw").value.trim(), n=$("newPw").value.trim();
+  if(!o||!n){ $("pwMsg").className="msg err"; $("pwMsg").textContent="请填写当前密码和新密码"; return; }
+  this.disabled=true; $("pwMsg").textContent="修改中…";
+  rpc("admin_changepw",{p_old:o,p_new:n})
+    .then(function(r){
+      if(!r||!r.ok) throw new Error((r&&r.err)||"修改失败");
+      PWD=n; try{ sessionStorage.setItem("ainav.admin.pw",n); }catch(e){}
+      $("pwMsg").className="msg ok"; $("pwMsg").textContent="密码已更新";
+      $("oldPw").value=""; $("newPw").value="";
+    }).catch(function(e){ $("pwMsg").className="msg err"; $("pwMsg").textContent=e.message||"修改失败"; })
+    .then(function(){ $("chpwBtn").disabled=false; });
+});
+
+// auto-login from session so refresh doesn't ask again
+(function(){
+  var saved=""; try{ saved=sessionStorage.getItem("ainav.admin.pw")||""; }catch(e){}
+  if(!saved) return;
+  PWD=saved;
+  rpc("admin_stats",{pw:PWD}).then(function(){ showDash(); return load(); }).then(function(){ refresh(); })
+    .catch(function(){ PWD=""; });
+})();
+})();
+</script>
+</body>
+</html>
